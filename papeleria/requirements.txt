@@ -1,0 +1,14 @@
+Django==5.2
+django-extensions
+psycopg2-binary
+ipython
+pydot
+graphviz
+django-crispy-forms
+crispy-bootstrap5
+lxml
+zeep
+python-dotenv
+six
+django-environ
+django-widget-tweaks

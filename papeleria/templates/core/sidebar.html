@@ -1,0 +1,59 @@
+{% load static %}
+<div>
+    <div class="brand-logo d-flex align-items-center justify-content-between">
+        <a href="{% url 'core:dashboard' %}" class="text-nowrap logo-img">
+            <img src="{% static '/assets/img/logos/logo-light.svg' %}" alt="" />
+        </a>
+        <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+        </div>
+    </div>
+    <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+        <ul id="sidebarnav">
+            <li class="nav-small-cap">
+                <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
+                <span class="hide-menu">Inicio</span>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'core:dashboard' %}" aria-expanded="false">
+                    <span>
+                        <iconify-icon icon="solar:home-smile-bold-duotone" class="fs-6"></iconify-icon>
+                    </span>
+                    <span class="hide-menu">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-small-cap">
+                <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
+                <span class="hide-menu">Gestión</span>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'core:producto-list' %}" aria-expanded="false">
+                    <span>
+                        <iconify-icon icon="solar:box-minimalistic-bold-duotone" class="fs-6"></iconify-icon>
+                    </span>
+                    <span class="hide-menu">Productos</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'core:categoria-list' %}" aria-expanded="false">
+                    <span>
+                        <iconify-icon icon="solar:folder-bold-duotone" class="fs-6"></iconify-icon>
+                    </span>
+                    <span class="hide-menu">Categorías</span>
+                </a>
+            </li>
+            <li class="nav-small-cap">
+                <i class="ti ti-dots nav-small-cap-icon fs-6"></i>
+                <span class="hide-menu">Ventas</span>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'core:nueva-venta' %}" aria-expanded="false">
+                    <span>
+                        <iconify-icon icon="solar:cash-out-bold-duotone" class="fs-6"></iconify-icon>
+                    </span>
+                    <span class="hide-menu">Nueva Venta</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

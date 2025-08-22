@@ -1,0 +1,128 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <h2 class="fw-bold">Nueva Venta</h2>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Buscar Producto</h5>
+                <div class="input-group mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre o código...">
+                </div>
+                
+                <div id="productosList" style="height: 500px; overflow-y: auto;">
+                    {% for producto in productos %}
+                    <div class="card mb-2 product-item" data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio_venta|floatformat:2 }}" data-stock="{{ producto.stock }}">
+                        <div class="card-body p-2 d-flex align-items-center">
+                            {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">{{ producto.nombre }}</h6>
+                                <p class="text-muted mb-0">Stock: {{ producto.stock }} - ${{ producto.precio_venta|floatformat:2 }}</p>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary add-to-cart-btn">Agregar</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Carrito de Compra</h5>
+                <ul id="cartItems" class="list-group mb-3">
+                    </ul>
+                <div class="d-flex justify-content-between">
+                    <h5>Total:</h5>
+                    <h5 id="totalPrice">$0.00</h5>
+                </div>
+                <button id="processSaleBtn" class="btn btn-success btn-lg w-100 mt-3" disabled>Procesar Venta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const productsList = document.getElementById('productosList');
+    const cartItems = document.getElementById('cartItems');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const processSaleBtn = document.getElementById('processSaleBtn');
+    
+    let cart = {};
+
+    // Lógica para buscar productos
+    searchInput.addEventListener('keyup', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        Array.from(productsList.children).forEach(productDiv => {
+            const productName = productDiv.dataset.nombre.toLowerCase();
+            const productId = productDiv.dataset.id;
+            if (productName.includes(searchTerm)) {
+                productDiv.style.display = '';
+            } else {
+                productDiv.style.display = 'none';
+            }
+        });
+    });
+
+    // Lógica para agregar al carrito
+    productsList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-to-cart-btn')) {
+            const productDiv = e.target.closest('.product-item');
+            const id = productDiv.dataset.id;
+            const nombre = productDiv.dataset.nombre;
+            const precio = parseFloat(productDiv.dataset.precio);
+            const stock = parseInt(productDiv.dataset.stock);
+
+            if (cart[id]) {
+                if (cart[id].cantidad < stock) {
+                    cart[id].cantidad++;
+                } else {
+                    alert('No hay más stock disponible para este producto.');
+                    return;
+                }
+            } else {
+                cart[id] = { id, nombre, precio, cantidad: 1 };
+            }
+            updateCart();
+        }
+    });
+
+    // Lógica para actualizar el carrito
+    function updateCart() {
+        cartItems.innerHTML = '';
+        let total = 0;
+        for (const id in cart) {
+            const item = cart[id];
+            total += item.precio * item.cantidad;
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                ${item.nombre} x ${item.cantidad}
+                <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
+            `;
+            cartItems.appendChild(li);
+        }
+        totalPriceElement.textContent = `$${total.toFixed(2)}`;
+        processSaleBtn.disabled = Object.keys(cart).length === 0;
+    }
+
+    // Lógica para procesar la venta (solo un placeholder por ahora)
+    processSaleBtn.addEventListener('click', () => {
+        alert('Venta procesada con éxito. Implementarás la lógica de backend aquí.');
+        // Aquí enviarías los datos del 'cart' a una vista de Django para procesar la venta
+    });
+});
+</script>
+
+{% endblock %}

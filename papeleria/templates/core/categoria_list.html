@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+        <h2 class="fw-bold">Gestión de Categorías</h2>
+        <a href="{% url 'core:categoria-create' %}" class="btn btn-primary">
+            <i class="ti ti-plus"></i> Añadir Categoría
+        </a>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for categoria in categorias %}
+                            <tr>
+                                <td>{{ categoria.nombre }}</td>
+                                <td>{{ categoria.descripcion|default:"Sin descripción" }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-warning">Editar</a>
+                                    <a href="#" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <div class="alert alert-info" role="alert">
+                                        No hay categorías registradas. <a href="{% url 'core:categoria-create' %}" class="alert-link">¡Añade una ahora!</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

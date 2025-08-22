@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+        <h2 class="fw-bold">Gestión de Productos</h2>
+        <a href="{% url 'core:producto-create' %}" class="btn btn-primary">
+            <i class="ti ti-plus"></i> Añadir Producto
+        </a>
+    </div>
+
+    {% for producto in productos %}
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card h-100">
+            {% if producto.imagen %}
+            <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="object-fit: cover; height: 200px;">
+            {% else %}
+            <img src="{% static 'assets/img/placeholder.png' %}" class="card-img-top" alt="Sin imagen" style="object-fit: cover; height: 200px;">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="card-text text-muted mb-1">{{ producto.categoria.nombre }}</p>
+                <h4 class="fw-bold text-primary">${{ producto.precio_venta|floatformat:2 }}</h4>
+                <div class="mt-auto">
+                    <span class="badge {% if producto.stock > 10 %} text-bg-success {% elif producto.stock > 0 %} text-bg-warning {% else %} text-bg-danger {% endif %}">
+                        Stock: {{ producto.stock }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <a href="#" class="btn btn-sm btn-outline-info">Ver</a>
+                <a href="#" class="btn btn-sm btn-outline-warning">Editar</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info" role="alert">
+            No hay productos registrados. <a href="{% url 'core:producto-create' %}" class="alert-link">¡Añade uno ahora!</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
