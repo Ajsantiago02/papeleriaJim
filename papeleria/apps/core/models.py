@@ -29,9 +29,11 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, related_name='productos')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     activo = models.BooleanField(default=True)
+    imagen = models.ImageField(upload_to='productos/', blank=True, null=True) # ¡El nuevo campo!
 
     def __str__(self):
         return self.nombre
+
         
 # ======================================================================
 # MODELOS DE VENTAS

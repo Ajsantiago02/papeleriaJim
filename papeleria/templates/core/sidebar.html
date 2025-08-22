@@ -2,7 +2,7 @@
 <div>
     <div class="brand-logo d-flex align-items-center justify-content-between">
         <a href="{% url 'core:dashboard' %}" class="text-nowrap logo-img">
-            <img src="{% static '/assets/img/logos/logo-light.svg' %}" alt="" />
+            <img src="{% static 'assets/img/products/logojimenez.png' %}" style="width: 12rem;" alt="logojimenez" />
         </a>
         <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
@@ -48,6 +48,14 @@
                         <iconify-icon icon="solar:upload-square-bold-duotone" class="fs-6"></iconify-icon>
                     </span>
                     <span class="hide-menu">Cargar Productos</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'core:reportes-ventas' %}" aria-expanded="false">
+                    <span>
+                        <iconify-icon icon="solar:document-add-bold-duotone" class="fs-6"></iconify-icon>
+                    </span>
+                    <span class="hide-menu">Generar Reporte</span>
                 </a>
             </li>
             <li class="nav-small-cap">

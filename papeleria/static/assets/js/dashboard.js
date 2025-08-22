@@ -72,11 +72,6 @@ $(function () {
     },
   };
 
-  var chart = new ApexCharts(
-    document.querySelector("#traffic-overview"),
-    chart
-  );
-  chart.render();
 
 
 })

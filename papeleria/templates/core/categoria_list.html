@@ -19,7 +19,6 @@
                             <tr>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Descripción</th>
-                                <th scope="col">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -27,10 +26,6 @@
                             <tr>
                                 <td>{{ categoria.nombre }}</td>
                                 <td>{{ categoria.descripcion|default:"Sin descripción" }}</td>
-                                <td>
-                                    <a href="#" class="btn btn-sm btn-outline-warning">Editar</a>
-                                    <a href="#" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                                </td>
                             </tr>
                             {% empty %}
                             <tr>
