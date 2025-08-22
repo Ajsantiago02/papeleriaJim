@@ -19,4 +19,7 @@ urlpatterns = [
 
     #Venta
     path('venta/', views.VentaView.as_view(), name='nueva-venta'),
+    path('upload-csv/', views.UploadCSVView.as_view(), name='upload_csv'),
+    path('productos/editar/<int:pk>/', views.ProductoUpdateView.as_view(), name='producto-edit'),
+    path('productos/<int:pk>/', views.producto_detail_json, name='producto-detail-json'),
 ]

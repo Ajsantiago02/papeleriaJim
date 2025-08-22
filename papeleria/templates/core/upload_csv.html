@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cargar Productos{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cargar Productos desde CSV</h5>
+                        <p class="card-subtitle mb-4">Sube un archivo CSV con tus productos para agregarlos o actualizarlos.</p>
+
+                        {% if messages %}
+                            <ul class="list-unstyled">
+                                {% for message in messages %}
+                                <li class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}">{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="csv_file" class="form-label">Seleccionar archivo CSV:</label>
+                                <input type="file" class="form-control" id="csv_file" name="csv_file" required>
+                                <small class="form-text text-muted">Asegúrate de que el archivo tenga las columnas correctas: Producto, Cantidad, Precio Unitario (Costo), Precio de Venta Unitario (30% Margen).</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cargar Archivo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

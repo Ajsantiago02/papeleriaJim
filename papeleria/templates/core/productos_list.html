@@ -10,8 +10,17 @@
         </a>
     </div>
 
+    <div class="col-12 mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <span id="product-count" class="badge text-bg-secondary fs-4">Total de Productos: {{ productos|length }}</span>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Buscar productos..." aria-label="Search" id="search-input">
+            </form>
+        </div>
+    </div>
+
     {% for producto in productos %}
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card">
         <div class="card h-100">
             {% if producto.imagen %}
             <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="object-fit: cover; height: 200px;">
@@ -29,8 +38,8 @@
                 </div>
             </div>
             <div class="card-footer d-flex justify-content-between align-items-center">
-                <a href="#" class="btn btn-sm btn-outline-info">Ver</a>
-                <a href="#" class="btn btn-sm btn-outline-warning">Editar</a>
+                <a href="#" class="btn btn-sm btn-outline-info view-detail-btn" data-pk="{{ producto.pk }}">Ver Detalles</a>
+                <a href="{% url 'core:producto-edit' producto.pk %}" class="btn btn-sm btn-outline-warning">Editar</a>
             </div>
         </div>
     </div>
@@ -42,4 +51,117 @@
     </div>
     {% endfor %}
 </div>
+
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel">Detalles del Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <img id="modal-image" src="" alt="Imagen del producto" class="img-fluid rounded" style="max-height: 200px;">
+                </div>
+                <h4 id="modal-title" class="fw-bold"></h4>
+                <p id="modal-category" class="text-muted"></p>
+                <hr>
+                <p><strong>Descripción:</strong> <span id="modal-description"></span></p>
+                <p><strong>Código de Barras:</strong> <span id="modal-barcode"></span></p>
+                <p><strong>Costo de Compra:</strong> $<span id="modal-cost"></span></p>
+                <p><strong>Precio de Venta:</strong> $<span id="modal-price"></span></p>
+                <p><strong>Stock:</strong> <span id="modal-stock" class="badge"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const productCards = document.querySelectorAll('.product-card');
+        const productCount = document.getElementById('product-count');
+        const noResultsMessage = document.querySelector('.no-results-js');
+        const noProductsMessage = document.querySelector('.no-products-found');
+        const detailButtons = document.querySelectorAll('.view-detail-btn');
+        const modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+
+        // Lógica de búsqueda con JS
+        searchInput.addEventListener('keyup', function(e) {
+            const searchText = e.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+            productCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const category = card.querySelector('.card-text').textContent.toLowerCase();
+                
+                if (title.includes(searchText) || category.includes(searchText)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            productCount.textContent = `Total de Productos: ${visibleCount}`;
+            if (visibleCount === 0 && searchText !== '') {
+                // Muestra un mensaje si no se encontraron resultados en la búsqueda
+                if (noResultsMessage) noResultsMessage.classList.remove('d-none');
+            } else {
+                if (noResultsMessage) noResultsMessage.classList.add('d-none');
+            }
+            if (noProductsMessage) {
+                noProductsMessage.style.display = (visibleCount === 0 && searchText === '') ? '' : 'none';
+            }
+        });
+
+        // Lógica del modal de detalles con JS
+        detailButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.dataset.pk;
+                
+                // Construcción de la URL de forma segura
+                //const url = `{% url 'core:producto-detail-json' 0 %}`.replace('0', productId);
+                const url = `{% url 'core:producto-detail-json' 0 %}`.replace('0', productId);
+
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error de red al cargar el producto.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('modal-title').textContent = data.nombre;
+                        document.getElementById('modal-category').textContent = data.categoria;
+                        document.getElementById('modal-description').textContent = data.descripcion || 'N/A';
+                        document.getElementById('modal-barcode').textContent = data.codigo_barras || 'N/A';
+                        document.getElementById('modal-cost').textContent = parseFloat(data.costo_compra).toFixed(2);
+                        document.getElementById('modal-price').textContent = parseFloat(data.precio_venta).toFixed(2);
+                        document.getElementById('modal-stock').textContent = `Stock: ${data.stock}`;
+                        document.getElementById('modal-image').src = data.imagen_url;
+
+                        const stockBadge = document.getElementById('modal-stock');
+                        stockBadge.className = 'badge';
+                        if (data.stock > 10) {
+                            stockBadge.classList.add('text-bg-success');
+                        } else if (data.stock > 0) {
+                            stockBadge.classList.add('text-bg-warning');
+                        } else {
+                            stockBadge.classList.add('text-bg-danger');
+                        }
+                        
+                        modal.show();
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
 {% endblock %}
