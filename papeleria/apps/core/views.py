@@ -194,6 +194,32 @@ class VentaView(View):
             
             return JsonResponse({'success': True, 'message': f'Venta procesada con éxito. Total: ${total_venta:.2f}'}, status=200)
 
+class VentaDeleteView(DeleteView):
+    model = Venta
+    template_name = 'core/venta_confirm_delete.html'
+    success_url = reverse_lazy('core:ventas-list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        with transaction.atomic():
+            detalles = DetalleVenta.objects.filter(venta=self.object)
+            for detalle in detalles:
+                producto = detalle.producto
+                producto.stock += detalle.cantidad
+                producto.save()
+            
+            self.object.delete()
+        
+        return JsonResponse({'success': True, 'message': 'Venta eliminada correctamente y stock devuelto.'})
+    
+
+class VentasListView(ListView):
+    model = Venta
+    template_name = 'core/ventas_list.html'
+    context_object_name = 'ventas'
+    ordering = ['-fecha_venta']
+
 class UploadCSVView(View):
     template_name = 'core/upload_csv.html'
 

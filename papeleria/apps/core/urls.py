@@ -24,4 +24,7 @@ urlpatterns = [
     path('productos/<int:pk>/', views.producto_detail_json, name='producto-detail-json'),
     path('reportes/ventas/', views.ReportesVentaView.as_view(), name='reportes-ventas'),
     path('categorias/delete/<int:pk>/', views.CategoriaDeleteView.as_view(), name='categoria-delete'),
+    path('eliminar-venta/<int:pk>/', views.VentaDeleteView.as_view(), name='eliminar-venta'),
+    path('ventas/', views.VentasListView.as_view(), name='ventas-list'),
+
 ]

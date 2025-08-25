@@ -12,3 +12,4 @@ python-dotenv
 six
 django-environ
 django-widget-tweaks
+Pillow
